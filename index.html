@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>HIT · Salas de reunión</title>
+<!--
+  Repartidor del A/B test.
+
+  /                asigna una variante al azar, 50/50, y la recuerda por visitante
+  /?v=copiloto     fuerza COPILOTO y la deja fijada
+  /?v=explora      fuerza EXPLORA y la deja fijada
+  /?v=off          borra la asignación y muestra el selector manual
+  /copiloto        entra directo, sin tocar la asignación
+  /explora         entra directo, sin tocar la asignación
+
+  Los destinos con nombre corto los resuelve vercel.json. Cuando suba la
+  versión hay que tocar UNA línea de vercel.json, no este archivo.
+-->
+<style>
+  :root{
+    --acc:#1268D6; --acc-hi:#1F8AFF; --acc-s:#E8F3FF;
+    --ink:#101418; --g1:#5B6672; --line:#E4E8EC; --bg:#FBFCFD;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;
+    background:var(--bg);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{width:100%;max-width:560px;text-align:center}
+  .mark{font-weight:800;letter-spacing:-.5px;font-size:19px;color:var(--acc)}
+  h1{font-size:23px;line-height:1.25;margin:14px 0 6px;letter-spacing:-.4px}
+  p.sub{margin:0;color:var(--g1);font-size:14px}
+
+  /* Estado por defecto: repartiendo. Si el JS no corre, nunca se ve. */
+  #load{margin-top:26px;color:var(--g1);font-size:13px}
+  .dots{display:inline-block;width:34px;text-align:left}
+
+  /* Selector manual */
+  #pick{display:none;margin-top:26px;gap:12px;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  a.card{display:block;text-align:left;padding:16px 18px;border-radius:14px;
+    border:1px solid var(--line);background:#fff;text-decoration:none;color:inherit;
+    transition:border-color .15s,background .15s,transform .15s}
+  a.card:hover,a.card:focus-visible{border-color:var(--acc-hi);background:var(--acc-s);
+    transform:translateY(-2px);outline:none}
+  a.card b{display:block;font-size:15px;letter-spacing:.2px}
+  a.card span{display:block;margin-top:3px;color:var(--g1);font-size:13px}
+  .ver{margin-top:22px;color:#98A2AD;font-size:12px}
+  .ver code{background:#fff;border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+  noscript{display:block;margin-top:26px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="mark">HIT</div>
+  <h1>Salas de reunión</h1>
+  <p class="sub">Prototipo del test A/B. Datos reales de inventario y precios, reserva simulada.</p>
+
+  <div id="load">Abriendo tu versión<span class="dots"></span></div>
+
+  <div id="pick">
+    <a class="card" href="/copiloto"><b>COPILOTO</b><span>Buscador conversacional</span></a>
+    <a class="card" href="/explora"><b>EXPLORA</b><span>Buscador clásico con filtros</span></a>
+  </div>
+
+  <noscript>
+    <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">
+      <a class="card" href="/copiloto"><b>COPILOTO</b><span>Buscador conversacional</span></a>
+      <a class="card" href="/explora"><b>EXPLORA</b><span>Buscador clásico con filtros</span></a>
+    </div>
+  </noscript>
+
+  <p class="ver">Para entrar a una versión puntual: <code>/copiloto</code> · <code>/explora</code></p>
+</div>
+
+<script>
+(function(){
+  var KEY = "hit-salas-ab";
+  var DEST = { copiloto:"/copiloto", explora:"/explora" };
+
+  function store(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  function read(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function clear(k){ try{ localStorage.removeItem(k); }catch(e){} }
+
+  function manual(){
+    document.getElementById("load").style.display="none";
+    document.getElementById("pick").style.display="grid";
+  }
+
+  // animación de los puntos, para que no parezca colgado
+  var d=document.querySelector(".dots"), n=0;
+  var tick=setInterval(function(){ n=(n+1)%4; d.textContent=Array(n+1).join("."); },320);
+
+  var q = new URLSearchParams(location.search).get("v");
+
+  if (q === "off" || q === "elegir") { clear(KEY); clearInterval(tick); manual(); return; }
+
+  var v = null;
+  if (q === "copiloto" || q === "a") v = "copiloto";
+  else if (q === "explora" || q === "b") v = "explora";
+
+  if (v) store(KEY, v);
+  else {
+    v = read(KEY);
+    if (v !== "copiloto" && v !== "explora") {
+      v = Math.random() < 0.5 ? "copiloto" : "explora";
+      store(KEY, v);
+    }
+  }
+
+  // si el redirect no llega a pasar, a los 2 s mostramos el selector
+  setTimeout(function(){ clearInterval(tick); manual(); }, 2000);
+  location.replace(DEST[v]);
+})();
+</script>
+</body>
+</html>
