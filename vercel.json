@@ -2,14 +2,19 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/copiloto", "destination": "/hit-salas-copiloto-v2.2.html" },
-    { "source": "/explora",  "destination": "/hit-salas-explora-v2.2.html" }
+    { "source": "/copiloto", "destination": "/hit-salas-copiloto-v2.3.html" },
+    { "source": "/explora",  "destination": "/hit-salas-explora-v2.3.html" }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/((?!api/).*)",
+      "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     }
