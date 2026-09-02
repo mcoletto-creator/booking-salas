@@ -6,8 +6,8 @@ dependencias.
 
 | Variante | Archivo | Qué es |
 |---|---|---|
-| **COPILOTO** | `hit-salas-copiloto-v2.3.html` | Buscador conversacional, la landing pregunta y guía |
-| **EXPLORA** | `hit-salas-explora-v2.3.html` | Buscador clásico con filtros, ves todo y elegís |
+| **COPILOTO** | `hit-salas-copiloto-v2.4.html` | Buscador conversacional, la landing pregunta y guía |
+| **EXPLORA** | `hit-salas-explora-v2.4.html` | Buscador clásico con filtros, ves todo y elegís |
 
 Los otros archivos del repo:
 
@@ -16,7 +16,8 @@ Los otros archivos del repo:
 | `index.html` | Reparte el A/B 50/50 y recuerda la variante de cada visitante |
 | `vercel.json` | Rutas cortas `/copiloto` y `/explora`, y el `noindex` de todo el sitio |
 | `api/resenas.js` | Trae las reseñas reales de Google. Es la única que conoce la API key |
-| `embeber-fotos.py` | Mete las fotos adentro de los HTML, en base64 |
+| `preparar-fotos.py` | Prepara las fotos del Drive y las deja en `fotos/`, 3 por sala |
+| `embeber-fotos.py` | Alternativa que mete las fotos adentro del HTML, en base64 |
 | `publicar.sh` | `git add` + `commit` + `push` en un comando |
 | `docs/conflictos.md` | Lo que no cuadra entre las planillas y el brochure, para marketing |
 
@@ -49,28 +50,59 @@ para que no se pierda si alguien renombra el archivo.
 | v2.1 | Teléfono de contacto, coffee break servido en la sala, Tecno en Parque Patricios |
 | v2.2 | Textos de sede escritos por marketing, del brochure |
 | v2.3 | Reseñas reales de Google por Places API. Puntaje y total dejan de estar hardcodeados. Se sacó la barra de distribución inventada |
+| v2.4 | Nomenclatura oficial del 01/09. 48 salas: bajan las 3 de Polo excluidas, las 2 del Workcafé de CEL torre 1 y ARG-1-06; sube la cuarta Conference de CEL torre 2. La card ya no muestra un precio distinto al del checkout. Una sola escala de duración, sin la jornada de 8 h que no era tarifa. Reseñas reales desde el arranque, 1420 y 4,5, y solo se muestran las de 4 y 5 estrellas. Los 8 Place ID fijados. Las fotos pasan a archivos sueltos en `fotos/` |
 
 ## Cargar las fotos
 
-Poné las imágenes en una carpeta `fotos/` con este naming:
+Las fotos van como **archivos sueltos en `fotos/`**, y el HTML las referencia
+por ruta relativa. No van embebidas en base64.
+
+Por qué. Embebidas tienen techo. Medido con las fotos reales de Cañitas,
+comprimidas a 1200px y WebP 65, tres por sala son 19,6 MB de HTML y el límite
+sano es 12. Como archivos sueltos no hay techo, bajan solo las que se miran, y
+cambiar una foto es reemplazar un archivo en vez de regenerar los dos HTML.
+
+Sigue andando abierto con doble click, porque las rutas son relativas. La única
+condición es que la carpeta `fotos/` esté al lado del HTML.
+
+### Desde la descarga del Drive
+
+Las fotos vienen de Drive con una carpeta por sede y adentro una por sala.
 
 ```
-ARG-PB-01-1.jpg      sala ARG-PB-01, foto 1 (la portada)
-ARG-PB-01-2.jpg      sala ARG-PB-01, foto 2
-sede-arguibel-1.jpg  foto de la sede, para el carrusel
-landing-1.jpg        foto grande de la sección de valor
+descarga/01. Cañitas/Sala A/Cañitas_SalaA_0085.jpg
+descarga/02. Arguibel/Boardroom A/...
 ```
-
-Y corré:
 
 ```bash
-pip install Pillow
-python3 embeber-fotos.py fotos/ hit-salas-copiloto-v2.3.html hit-salas-explora-v2.3.html
+pip3 install Pillow
+python3 preparar-fotos.py descarga/ hit-salas-copiloto-v2.4.html hit-salas-explora-v2.4.html --por-sala 3
 ```
 
-Comprime a WebP, embebe en base64 y reescribe solo el bloque entre los
-marcadores `FOTOS-INICIO` y `FOTOS-FIN`. La carpeta `fotos/` está en el
-`.gitignore`: al repo van los HTML con las fotos ya adentro, no los originales.
+Elige las primeras 3 de cada sala, comprime a WebP 1200px calidad 65, las
+guarda en `fotos/` con el código de la sala y reescribe el bloque entre
+`FOTOS-INICIO` y `FOTOS-FIN`. El código de sala lo resuelve leyendo el array
+`SALAS` del HTML, cruzando sede, tipo y letra. Lo que no puede mapear lo lista
+al final en vez de adivinar.
+
+Si una sede tiene el mismo tipo y letra en dos pisos, la carpeta del Drive no
+alcanza para saber cuál es y hay que resolverlo a mano.
+
+### Naming, si las armás vos
+
+```
+ARG-PB-BR-A-1.webp   sala ARG-PB-BR-A, foto 1 (la portada)
+ARG-PB-BR-A-2.webp   sala ARG-PB-BR-A, foto 2
+sede-arguibel-1.webp foto de la sede, para el carrusel
+landing-1.webp       foto grande de la sección de valor
+```
+
+La ficha de sala se acomoda a cuántas fotos haya, de 1 a 5. Sin ninguna deja
+los cinco huecos con el placeholder, para no cambiar de alto cuando lleguen.
+
+`embeber-fotos.py` sigue en el repo y funciona, por si alguna vez hace falta un
+HTML que se mande por mail sin la carpeta al lado. Para el uso normal es
+`preparar-fotos.py`.
 
 ## Deploy en Vercel
 
@@ -139,13 +171,13 @@ problema de contenido duplicado entre las dos variantes.
 una versión nueva hay que tocar **esas dos líneas**, nada más:
 
 ```json
-{ "source": "/copiloto", "destination": "/hit-salas-copiloto-v2.3.html" },
-{ "source": "/explora",  "destination": "/hit-salas-explora-v2.3.html" }
+{ "source": "/copiloto", "destination": "/hit-salas-copiloto-v2.4.html" },
+{ "source": "/explora",  "destination": "/hit-salas-explora-v2.4.html" }
 ```
 
 La ventaja de dejar los archivos viejos en el repo es que las versiones
 anteriores siguen accesibles por su nombre completo, por ejemplo
-`/hit-salas-copiloto-v2.2.html`, para comparar.
+`/hit-salas-copiloto-v2.3.html`, para comparar.
 
 ## Publicar con GitHub Pages
 

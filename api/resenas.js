@@ -41,8 +41,14 @@ const SEDES = {
  * Para cerrarlo: abrí /api/resenas?ids=1 en la página publicada, verificá que
  * cada nombre que devuelve sea la sede correcta, y pegá el objeto acá. */
 const PLACE_IDS = {
-  arguibel: "", canitas: "", cel: "", libertador: "",
-  polo: "", tecno: "", ugarte: "", vilo: "",
+  arguibel: "ChIJ2ccDKwC1vJURRlEymqf1aZQ",
+  canitas: "ChIJr2Gy1L61vJUR3VXtFskpmKA",
+  cel: "ChIJze0cOZ21vJURq0z1i1Qmu2M",
+  libertador: "ChIJH0sAmau3vJURRAmk2a55oS0",
+  polo: "ChIJywuCQka1vJURYN4wMVn4Yw0",
+  tecno: "ChIJbU0wdAbLvJURzxRt1LL01ME",
+  ugarte: "ChIJSdDl3iu0vJURKEuZXPFgnGE",
+  vilo: "ChIJl9Ys6AqxvJURnFyhBsW_n5Q",
 };
 
 const BASE = "https://places.googleapis.com/v1";
@@ -120,7 +126,15 @@ function normalizar(d) {
         texto: (r.text && r.text.text) || (r.originalText && r.originalText.text) || "",
       };
     })
-    .filter((r) => r.texto);
+    /* Solo se muestran las de 4 y 5 estrellas. Decision de Mar del 01/09.
+     * Ojo con lo que esto significa: los textos son una seleccion, pero
+     * rating y total de abajo siguen siendo los de Google sobre TODAS las
+     * reseñas, no sobre las que quedan aca. Es a proposito: el promedio que
+     * se publica tiene que seguir siendo el real.
+     * Verificado el 01/09 que ninguna de las 8 sedes queda sin reseñas con
+     * este corte, la mas justa es Ugarte con 3 de 5. Si alguna sede quedara
+     * en cero, revPintar cae al estado de reemplazo con el link a Maps. */
+    .filter((r) => r.texto && r.estrellas >= 4);
   return {
     rating: typeof d.rating === "number" ? d.rating : 0,
     total: typeof d.userRatingCount === "number" ? d.userRatingCount : 0,

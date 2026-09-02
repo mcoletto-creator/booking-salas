@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/copiloto", "destination": "/hit-salas-copiloto-v2.3.html" },
-    { "source": "/explora",  "destination": "/hit-salas-explora-v2.3.html" }
+    { "source": "/copiloto", "destination": "/hit-salas-copiloto-v2.4.html" },
+    { "source": "/explora",  "destination": "/hit-salas-explora-v2.4.html" }
   ],
   "headers": [
     {
