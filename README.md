@@ -51,7 +51,7 @@ para que no se pierda si alguien renombra el archivo.
 | v2.2 | Textos de sede escritos por marketing, del brochure |
 | v2.3 | Reseñas reales de Google por Places API. Puntaje y total dejan de estar hardcodeados. Se sacó la barra de distribución inventada |
 | v2.4 | Nomenclatura oficial del 01/09. 48 salas: bajan las 3 de Polo excluidas, las 2 del Workcafé de CEL torre 1 y ARG-1-06; sube la cuarta Conference de CEL torre 2. La card ya no muestra un precio distinto al del checkout. Una sola escala de duración, sin la jornada de 8 h que no era tarifa. Reseñas reales desde el arranque, 1420 y 4,5, y solo se muestran las de 4 y 5 estrellas. Los 8 Place ID fijados |
-| v2.5 | Fotos reales: 21 salas con tres cada una, las 8 fachadas de sede y la foto grande de la home, como archivos sueltos en `fotos/`. Textos de marketing en toda la landing, con disponibilidad y precio de referencia por sede. Equipamiento confirmado sala por sala y limpieza de lo que se afirmaba sin fuente. La ficha de sala pierde "Qué la diferencia" y el equipamiento pasa adentro de "Qué incluye" |
+| v2.5 | Fotos reales: 21 salas con tres cada una, las 8 fachadas de sede y la foto grande de la home, como archivos sueltos en `fotos/`. Textos de marketing en toda la landing, con disponibilidad y precio de referencia por sede. Equipamiento confirmado sala por sala y limpieza de lo que se afirmaba sin fuente. La ficha de sala pierde "Qué la diferencia", el equipamiento pasa adentro de "Qué incluye" y las fotos pasan a un slideshow inline en vez de un modal |
 
 ## Cargar las fotos
 
@@ -104,8 +104,8 @@ sede-arguibel-1.webp fachada de la sede, para el carrusel de ubicaciones
 landing-1.webp       foto grande de la sección de valor de la home
 ```
 
-La ficha de sala se acomoda a cuántas fotos haya, de 1 a 5. Sin ninguna deja
-los cinco huecos con el placeholder, para no cambiar de alto cuando lleguen.
+La ficha de sala las pasa en un slideshow que avanza solo. Con una sola foto
+no muestra controles, y sin ninguna queda un recuadro que dice "Foto pendiente".
 
 `embeber-fotos.py` sigue en el repo y funciona, por si alguna vez hace falta un
 HTML que se mande por mail sin la carpeta al lado. Para el uso normal es
