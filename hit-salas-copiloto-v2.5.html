@@ -1164,7 +1164,7 @@
       <li><b>La política de cancelación estaba inventada y era más generosa que la real.</b> Decía "gratis hasta 24 h antes y te devolvemos el total". La de verdad, del brochure: se abona el 100% al reservar, con más de 72 h queda a favor por dos meses, con menos de 72 h no hay reintegro. Corregida en los seis lugares donde aparecía.</li>
       <li><b>Las fotos de la sala pasan solas, sin pop-up.</b> Antes era una grilla que había que clickear para abrir un modal, y el modal tapaba el precio y el botón de reservar justo cuando la persona estaba decidiendo. Ahora es un slideshow adentro de la ficha: avanza solo cada 5 segundos, se frena al pasar el mouse o al tocar cualquier control, y tiene flechas y puntos para moverse. El alto es fijo, 300 px en desktop y 210 en mobile, así la reserva no se va de pantalla. Las salas sin fotos muestran un solo recuadro que dice "Foto pendiente" en vez de cinco huecos grises.</li>
       <li><b>La home ya no tiene ningún hueco de foto.</b> Las ocho sedes tienen su fachada en el carrusel de ubicaciones y la sección "Tu experiencia en HIT" tiene la suya. Las fachadas salen de la carpeta <code>Fotos Sitios</code> del SharePoint. Para la foto grande no hay un archivo propio, así que se reusa la portada de una sala, elegible con <code>--landing</code>; por defecto el Boardroom de CEL, que es la más amplia y la única con la pantalla encendida.</li>
-      <li><b>Entraron las fotos reales.</b> 21 de las 48 salas ya tienen tres fotos, y las ocho sedes tienen su fachada en el carrusel de ubicaciones. Salen del SharePoint de GROWTH MARKETING, carpeta <code>FOTOS SALAS</code>, y las prepara <code>preparar-fotos.py</code>. Son 71 archivos y 4 MB en <code>fotos/</code>, con el HTML sin moverse de 0,21 MB. Faltan Libertador y Polo enteras, que todavía no están en SharePoint, y nueve carpetas que están creadas pero vacías.</li>
+      <li><b>Entraron las fotos reales.</b> 21 de las 48 salas ya tienen entre tres y cinco fotos, 4,6 en promedio, y las ocho sedes tienen su fachada en el carrusel de ubicaciones. Salen del SharePoint de GROWTH MARKETING, carpeta <code>FOTOS SALAS</code>, y las prepara <code>preparar-fotos.py</code>. Son 105 archivos y 5,7 MB en <code>fotos/</code>, con el HTML sin moverse de 0,21 MB. Faltan Libertador y Polo enteras, que todavía no están en SharePoint, y nueve carpetas que están creadas pero vacías.</li>
       <li><b>La ficha de sala tiene un bloque menos.</b> Se sacó "Qué la diferencia" y el equipamiento propio de cada sala pasó adentro de "Qué incluye", junto con lo que trae toda sala de la red. Antes eran dos listas separadas que el usuario tenía que leer juntas para saber con qué se iba a encontrar. Ahora se lee una sola: Wifi, TV con HDMI y té y café siempre, y abajo la pizarra y el teléfono IP de esa sala, con cruz gris cuando no los tiene. El Boardroom B de Polo, que es un living, muestra las dos cruces. El texto de <code>dif</code> sigue en la card del listado.</li>
       <li><b>Los textos son los de marketing</b>, del documento «Textos LANDING SALAS». Cambió el título del hero, la bajada, el CTA, los rótulos del buscador, el módulo de disponibilidad, el de reseñas, los tres beneficios de «Tu experiencia en HIT», el bloque de add-ons con su disclaimer y las descripciones de seis sedes. Arguibel y CEL ya tenían la versión final.</li>
       <li><b>La ficha de sede ahora dice disponibilidad y precio de referencia</b>, como pedía el documento. Los dos salen calculados de las salas cargadas y no escritos a mano: el documento traía CEL como «5 y 12 personas» cuando el Boardroom es de 14, y un número a mano se desactualiza sin que nadie lo note. Los ocho precios de referencia del documento sí coinciden uno por uno con la lista de agosto.</li>
@@ -1748,27 +1748,27 @@ function verCancelacion(){
    que el prototipo funciona igual con fotos, sin fotos, o con algunas. */
 /* FOTOS-INICIO */
 const FOTOS={
-  "ARG-P1-CF-A":["fotos/ARG-P1-CF-A-1.webp","fotos/ARG-P1-CF-A-2.webp","fotos/ARG-P1-CF-A-3.webp"],
-  "ARG-P1-CF-B":["fotos/ARG-P1-CF-B-1.webp","fotos/ARG-P1-CF-B-2.webp","fotos/ARG-P1-CF-B-3.webp"],
-  "ARG-P1-CF-C":["fotos/ARG-P1-CF-C-1.webp","fotos/ARG-P1-CF-C-2.webp","fotos/ARG-P1-CF-C-3.webp"],
-  "ARG-P1-CF-E":["fotos/ARG-P1-CF-E-1.webp","fotos/ARG-P1-CF-E-2.webp","fotos/ARG-P1-CF-E-3.webp"],
-  "ARG-P2-CF-A":["fotos/ARG-P2-CF-A-1.webp","fotos/ARG-P2-CF-A-2.webp","fotos/ARG-P2-CF-A-3.webp"],
-  "ARG-P2-CF-B":["fotos/ARG-P2-CF-B-1.webp","fotos/ARG-P2-CF-B-2.webp","fotos/ARG-P2-CF-B-3.webp"],
-  "ARG-P3-CF-A":["fotos/ARG-P3-CF-A-1.webp","fotos/ARG-P3-CF-A-2.webp","fotos/ARG-P3-CF-A-3.webp"],
-  "ARG-P3-CF-B":["fotos/ARG-P3-CF-B-1.webp","fotos/ARG-P3-CF-B-2.webp","fotos/ARG-P3-CF-B-3.webp"],
-  "CAN-P1-BR-C":["fotos/CAN-P1-BR-C-1.webp","fotos/CAN-P1-BR-C-2.webp","fotos/CAN-P1-BR-C-3.webp"],
-  "CAN-P1-CF-A":["fotos/CAN-P1-CF-A-1.webp","fotos/CAN-P1-CF-A-2.webp","fotos/CAN-P1-CF-A-3.webp"],
-  "CAN-P1-CF-B":["fotos/CAN-P1-CF-B-1.webp","fotos/CAN-P1-CF-B-2.webp","fotos/CAN-P1-CF-B-3.webp"],
-  "CEL2-P2-BR-A":["fotos/CEL2-P2-BR-A-1.webp","fotos/CEL2-P2-BR-A-2.webp","fotos/CEL2-P2-BR-A-3.webp"],
-  "CEL2-P2-CF-C":["fotos/CEL2-P2-CF-C-1.webp","fotos/CEL2-P2-CF-C-2.webp","fotos/CEL2-P2-CF-C-3.webp"],
-  "TEC-P1-BR-A":["fotos/TEC-P1-BR-A-1.webp","fotos/TEC-P1-BR-A-2.webp","fotos/TEC-P1-BR-A-3.webp"],
+  "ARG-P1-CF-A":["fotos/ARG-P1-CF-A-1.webp","fotos/ARG-P1-CF-A-2.webp","fotos/ARG-P1-CF-A-3.webp","fotos/ARG-P1-CF-A-4.webp","fotos/ARG-P1-CF-A-5.webp"],
+  "ARG-P1-CF-B":["fotos/ARG-P1-CF-B-1.webp","fotos/ARG-P1-CF-B-2.webp","fotos/ARG-P1-CF-B-3.webp","fotos/ARG-P1-CF-B-4.webp","fotos/ARG-P1-CF-B-5.webp"],
+  "ARG-P1-CF-C":["fotos/ARG-P1-CF-C-1.webp","fotos/ARG-P1-CF-C-2.webp","fotos/ARG-P1-CF-C-3.webp","fotos/ARG-P1-CF-C-4.webp","fotos/ARG-P1-CF-C-5.webp"],
+  "ARG-P1-CF-E":["fotos/ARG-P1-CF-E-1.webp","fotos/ARG-P1-CF-E-2.webp","fotos/ARG-P1-CF-E-3.webp","fotos/ARG-P1-CF-E-4.webp"],
+  "ARG-P2-CF-A":["fotos/ARG-P2-CF-A-1.webp","fotos/ARG-P2-CF-A-2.webp","fotos/ARG-P2-CF-A-3.webp","fotos/ARG-P2-CF-A-4.webp"],
+  "ARG-P2-CF-B":["fotos/ARG-P2-CF-B-1.webp","fotos/ARG-P2-CF-B-2.webp","fotos/ARG-P2-CF-B-3.webp","fotos/ARG-P2-CF-B-4.webp","fotos/ARG-P2-CF-B-5.webp"],
+  "ARG-P3-CF-A":["fotos/ARG-P3-CF-A-1.webp","fotos/ARG-P3-CF-A-2.webp","fotos/ARG-P3-CF-A-3.webp","fotos/ARG-P3-CF-A-4.webp"],
+  "ARG-P3-CF-B":["fotos/ARG-P3-CF-B-1.webp","fotos/ARG-P3-CF-B-2.webp","fotos/ARG-P3-CF-B-3.webp","fotos/ARG-P3-CF-B-4.webp","fotos/ARG-P3-CF-B-5.webp"],
+  "CAN-P1-BR-C":["fotos/CAN-P1-BR-C-1.webp","fotos/CAN-P1-BR-C-2.webp","fotos/CAN-P1-BR-C-3.webp","fotos/CAN-P1-BR-C-4.webp"],
+  "CAN-P1-CF-A":["fotos/CAN-P1-CF-A-1.webp","fotos/CAN-P1-CF-A-2.webp","fotos/CAN-P1-CF-A-3.webp","fotos/CAN-P1-CF-A-4.webp","fotos/CAN-P1-CF-A-5.webp"],
+  "CAN-P1-CF-B":["fotos/CAN-P1-CF-B-1.webp","fotos/CAN-P1-CF-B-2.webp","fotos/CAN-P1-CF-B-3.webp","fotos/CAN-P1-CF-B-4.webp"],
+  "CEL2-P2-BR-A":["fotos/CEL2-P2-BR-A-1.webp","fotos/CEL2-P2-BR-A-2.webp","fotos/CEL2-P2-BR-A-3.webp","fotos/CEL2-P2-BR-A-4.webp","fotos/CEL2-P2-BR-A-5.webp"],
+  "CEL2-P2-CF-C":["fotos/CEL2-P2-CF-C-1.webp","fotos/CEL2-P2-CF-C-2.webp","fotos/CEL2-P2-CF-C-3.webp","fotos/CEL2-P2-CF-C-4.webp","fotos/CEL2-P2-CF-C-5.webp"],
+  "TEC-P1-BR-A":["fotos/TEC-P1-BR-A-1.webp","fotos/TEC-P1-BR-A-2.webp","fotos/TEC-P1-BR-A-3.webp","fotos/TEC-P1-BR-A-4.webp","fotos/TEC-P1-BR-A-5.webp"],
   "UGA-P2-BR-B":["fotos/UGA-P2-BR-B-1.webp","fotos/UGA-P2-BR-B-2.webp","fotos/UGA-P2-BR-B-3.webp"],
-  "UGA-P2-BR-D":["fotos/UGA-P2-BR-D-1.webp","fotos/UGA-P2-BR-D-2.webp","fotos/UGA-P2-BR-D-3.webp"],
-  "UGA-P2-CF-A":["fotos/UGA-P2-CF-A-1.webp","fotos/UGA-P2-CF-A-2.webp","fotos/UGA-P2-CF-A-3.webp"],
-  "UGA-P2-CF-C":["fotos/UGA-P2-CF-C-1.webp","fotos/UGA-P2-CF-C-2.webp","fotos/UGA-P2-CF-C-3.webp"],
-  "VIL-P5-BR-A":["fotos/VIL-P5-BR-A-1.webp","fotos/VIL-P5-BR-A-2.webp","fotos/VIL-P5-BR-A-3.webp"],
-  "VIL-P5-BR-B":["fotos/VIL-P5-BR-B-1.webp","fotos/VIL-P5-BR-B-2.webp","fotos/VIL-P5-BR-B-3.webp"],
-  "VIL-P5-BR-C":["fotos/VIL-P5-BR-C-1.webp","fotos/VIL-P5-BR-C-2.webp","fotos/VIL-P5-BR-C-3.webp"],
+  "UGA-P2-BR-D":["fotos/UGA-P2-BR-D-1.webp","fotos/UGA-P2-BR-D-2.webp","fotos/UGA-P2-BR-D-3.webp","fotos/UGA-P2-BR-D-4.webp"],
+  "UGA-P2-CF-A":["fotos/UGA-P2-CF-A-1.webp","fotos/UGA-P2-CF-A-2.webp","fotos/UGA-P2-CF-A-3.webp","fotos/UGA-P2-CF-A-4.webp","fotos/UGA-P2-CF-A-5.webp"],
+  "UGA-P2-CF-C":["fotos/UGA-P2-CF-C-1.webp","fotos/UGA-P2-CF-C-2.webp","fotos/UGA-P2-CF-C-3.webp","fotos/UGA-P2-CF-C-4.webp"],
+  "VIL-P5-BR-A":["fotos/VIL-P5-BR-A-1.webp","fotos/VIL-P5-BR-A-2.webp","fotos/VIL-P5-BR-A-3.webp","fotos/VIL-P5-BR-A-4.webp","fotos/VIL-P5-BR-A-5.webp"],
+  "VIL-P5-BR-B":["fotos/VIL-P5-BR-B-1.webp","fotos/VIL-P5-BR-B-2.webp","fotos/VIL-P5-BR-B-3.webp","fotos/VIL-P5-BR-B-4.webp","fotos/VIL-P5-BR-B-5.webp"],
+  "VIL-P5-BR-C":["fotos/VIL-P5-BR-C-1.webp","fotos/VIL-P5-BR-C-2.webp","fotos/VIL-P5-BR-C-3.webp","fotos/VIL-P5-BR-C-4.webp","fotos/VIL-P5-BR-C-5.webp"],
   "landing:1":["fotos/CEL2-P2-BR-A-1.webp"],
   "sede:arguibel":["fotos/sede-arguibel-1.webp"],
   "sede:canitas":["fotos/sede-canitas-1.webp"],

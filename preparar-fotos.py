@@ -33,7 +33,7 @@ del piso 3 de CEL, y mapearlas por parecido les pondría esas fotos a una sala
 que sigue publicada.
 
 Opciones:
-    --por-sala 3      cuántas fotos por sala (default 3)
+    --por-sala 5      cuántas fotos por sala (default 5)
     --ancho 1200      ancho máximo en píxeles (default 1200)
     --calidad 65      calidad WebP (default 65)
     --salida fotos    carpeta destino (default fotos)
@@ -155,7 +155,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("descarga")
     ap.add_argument("htmls", nargs="+")
-    ap.add_argument("--por-sala", type=int, default=3)
+    ap.add_argument("--por-sala", type=int, default=5)
     ap.add_argument("--ancho", type=int, default=1200)
     ap.add_argument("--calidad", type=int, default=65)
     ap.add_argument("--salida", default="fotos")
