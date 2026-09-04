@@ -124,8 +124,20 @@ def letra_de(n):
     return m.group(1) if m else None
 
 
+# Carpetas cuyo nombre no permite deducir la sala. Confirmadas por Mar el
+# 04/09. Van a mano a proposito: adivinarlas por parecido es justo lo que hace
+# que las fotos de una sala terminen en otra.
+MANUAL = {
+    ("canitas", "SALA D"): "CAN-P1-TR",                    # la Training Room, la unica de 24
+    ("cel", "SALA A- Piso 2  Torre Auditorio"): "CEL2-P2-CF-A",
+}
+
+
 def resolver(sede, carpeta_sala, salas):
     """'Conference 1.A' en arguibel -> ARG-P1-CF-A."""
+    fijo = MANUAL.get((sede, carpeta_sala.strip()))
+    if fijo:
+        return fijo
     n = norm(carpeta_sala)
     letra, piso = letra_de(n), piso_de(n)
     tipo = None

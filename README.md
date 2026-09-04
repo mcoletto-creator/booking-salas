@@ -51,7 +51,7 @@ para que no se pierda si alguien renombra el archivo.
 | v2.2 | Textos de sede escritos por marketing, del brochure |
 | v2.3 | Reseñas reales de Google por Places API. Puntaje y total dejan de estar hardcodeados. Se sacó la barra de distribución inventada |
 | v2.4 | Nomenclatura oficial del 01/09. 48 salas: bajan las 3 de Polo excluidas, las 2 del Workcafé de CEL torre 1 y ARG-1-06; sube la cuarta Conference de CEL torre 2. La card ya no muestra un precio distinto al del checkout. Una sola escala de duración, sin la jornada de 8 h que no era tarifa. Reseñas reales desde el arranque, 1420 y 4,5, y solo se muestran las de 4 y 5 estrellas. Los 8 Place ID fijados |
-| v2.5 | Fotos reales: 21 salas con entre tres y cinco cada una, las 8 fachadas de sede y la foto grande de la home, como archivos sueltos en `fotos/`. Textos de marketing en toda la landing, con disponibilidad y precio de referencia por sede. Equipamiento confirmado sala por sala y limpieza de lo que se afirmaba sin fuente. La ficha de sala pierde "Qué la diferencia", el equipamiento pasa adentro de "Qué incluye" y las fotos pasan a un slideshow inline en vez de un modal |
+| v2.5 | Fotos reales: 23 salas con entre tres y cinco cada una, las 8 fachadas de sede y la foto grande de la home, como archivos sueltos en `fotos/`. Textos de marketing en toda la landing, con disponibilidad y precio de referencia por sede. Equipamiento confirmado sala por sala y limpieza de lo que se afirmaba sin fuente. La ficha de sala pierde "Qué la diferencia", el equipamiento pasa adentro de "Qué incluye" y las fotos pasan a un slideshow inline en vez de un modal |
 
 ## Cargar las fotos
 
@@ -92,8 +92,10 @@ guarda en `fotos/` con el código de la sala y reescribe el bloque entre
 `SALAS` del HTML, cruzando sede, tipo y letra. Lo que no puede mapear lo lista
 al final en vez de adivinar.
 
-Si una sede tiene el mismo tipo y letra en dos pisos, la carpeta del Drive no
-alcanza para saber cuál es y hay que resolverlo a mano.
+Si una sede tiene el mismo tipo y letra en dos pisos, el nombre de la carpeta no
+alcanza para saber cuál es. Esos casos van en la constante `MANUAL` del script,
+uno por uno y con la fecha en que se confirmaron. No se resuelven por parecido a
+propósito: así es como las fotos de una sala terminan en otra.
 
 ### Naming, si las armás vos
 
