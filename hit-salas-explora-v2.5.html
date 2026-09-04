@@ -77,10 +77,14 @@
   /* Tope de 760px: a 100vh puros, en un monitor alto quedaba un tercio de foto
      vacia abajo del buscador. El encuadre va en 38% para mostrar el ventanal
      y no el piso. */
+  /* El hero es una banda de borde a borde, fuera del .wrap, para que la foto
+     ocupe todo el ancho. El contenido va en un .wrap propio adentro, asi el
+     texto y el buscador siguen alineados con el resto de la pagina. */
   .hero{text-align:center;position:relative;isolation:isolate;
     min-height:min(calc(100vh - var(--nav-h)),760px);
-    display:flex;flex-direction:column;justify-content:center;padding:58px 26px 62px;
-    border-radius:22px;overflow:hidden;background:#20262C center 38%/cover no-repeat}
+    display:flex;flex-direction:column;justify-content:center;padding:58px 0 62px;
+    overflow:hidden;background:#20262C center 38%/cover no-repeat}
+  .hero-wrap{width:100%}
   /* El degradado es mas fuerte en el medio de lo que pediria la foto sola: ahi
      cae la linea del precio, en 14px, justo sobre el ventanal. */
   .hero::after{content:"";position:absolute;inset:0;z-index:-1;
@@ -94,10 +98,7 @@
   .hero .chip{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff;
     backdrop-filter:blur(6px)}
   .hero .chip:hover{background:#fff;border-color:#fff;color:var(--ink)}
-  /* Full bleed en mobile. El margen negativo tiene que ser exactamente el
-     padding lateral del .wrap, que ahi es 16px: con -18px el hero sobresalia
-     2px y aparecia scroll horizontal en toda la pagina. */
-  @media(max-width:560px){.hero{border-radius:0;margin-inline:-16px;padding:44px 18px 34px}}
+  @media(max-width:560px){.hero{padding:44px 0 34px}}
   .hero-in{max-width:880px;margin:0 auto;width:100%}
   .below{padding:0 0 70px;text-align:center}
   @media(max-width:900px){.hero{min-height:0;padding:56px 0 40px}}
@@ -993,8 +994,8 @@
 
 <!-- ================= LANDING ================= -->
 <div id="landing">
-<div class="wrap">
-  <div class="hero">
+<div class="hero">
+  <div class="wrap hero-wrap">
     <h1>Tu próxima reunión<span class="off">empieza en HIT</span></h1>
     <p class="sub">Encontrá una sala equipada para cada tipo de encuentro. Elegí la sede, el día y el horario, y reservá online en minutos.<br><span class="sub-dato"><span class="nsedes">8</span> sedes en Buenos Aires, desde <b id="desdehora">$39.600 la hora</b>, con wifi, pantalla y café incluidos.</span></p>
     <div class="hero-in">
@@ -1011,7 +1012,9 @@
       <div class="chips" id="a_chips"></div>
     </div>
   </div>
+</div>
 
+<div class="wrap">
   <div class="below">
     <div id="geo-slot"></div>
     <div class="rev">
@@ -1184,7 +1187,7 @@
       <li><b>Migueletes, Pampa y Maipú no tienen salas de reunión.</b> Están cargadas en <code>SEDES</code> con su dirección y su cid, marcadas con <code>salas:false</code>, y quedan afuera del buscador, del carrusel, de los conteos y de las reseñas. Cuando tengan inventario, se les saca esa marca. Todo el flujo usa <code>SEDESOK</code>, que es la lista filtrada.</li>
       <li><b>El equipamiento sale del brochure "Salas de reunión Julio 2026"</b>, que lo muestra sala por sala con iconos. Antes se parseaba de las descripciones y quedaban 29 salas sin dato; ahora quedan cero. Wifi, TV con HDMI y té y café los tienen las 48, así que salieron del filtro y pasaron a "Qué incluye": un filtro que no descarta nada no es un filtro.</li>
       <li><b>La política de cancelación estaba inventada y era más generosa que la real.</b> Decía "gratis hasta 24 h antes y te devolvemos el total". La de verdad, del brochure: se abona el 100% al reservar, con más de 72 h queda a favor por dos meses, con menos de 72 h no hay reintegro. Corregida en los seis lugares donde aparecía.</li>
-      <li><b>El hero tiene foto.</b> Va de fondo el Boardroom A de Vilo, con un degradado encima para que el título y la línea del precio se lean sobre el ventanal. El texto pasó a blanco y los chips a vidrio esmerilado. Se elige con <code>--hero</code>. Si la foto no está cargada, el hero queda sobre un gris oscuro y se lee igual.</li>
+      <li><b>El hero tiene foto, de borde a borde.</b> Va de fondo el Boardroom A de Vilo, con un degradado encima para que el título y la línea del precio se lean sobre el ventanal. El texto pasó a blanco y los chips a vidrio esmerilado. Para que la imagen ocupe todo el ancho, el hero salió del contenedor con márgenes y pasó a ser una banda con su propio <code>.wrap</code> adentro, así el texto y el buscador siguen alineados con el resto de la página. Se elige con <code>--hero</code>. Si la foto no está cargada, el hero queda sobre un gris oscuro y se lee igual.</li>
       <li><b>Las fotos de la sala pasan solas, sin pop-up.</b> Antes era una grilla que había que clickear para abrir un modal, y el modal tapaba el precio y el botón de reservar justo cuando la persona estaba decidiendo. Ahora es un slideshow adentro de la ficha: avanza solo cada 5 segundos, se frena al pasar el mouse o al tocar cualquier control, y tiene flechas y puntos para moverse. El alto es fijo, 300 px en desktop y 210 en mobile, así la reserva no se va de pantalla. Las salas sin fotos muestran un solo recuadro que dice "Foto pendiente" en vez de cinco huecos grises.</li>
       <li><b>La home ya no tiene ningún hueco de foto.</b> Las ocho sedes tienen su fachada en el carrusel de ubicaciones y la sección "Tu experiencia en HIT" tiene la suya. Las fachadas salen de la carpeta <code>Fotos Sitios</code> del SharePoint. Para la foto grande no hay un archivo propio, así que se reusa la portada de una sala, elegible con <code>--landing</code>; por defecto el Boardroom de CEL, que es la más amplia y la única con la pantalla encendida.</li>
       <li><b>Entraron las fotos reales.</b> 28 de las 48 salas ya tienen entre tres y cinco fotos, 4,6 en promedio, y las ocho sedes tienen su fachada en el carrusel de ubicaciones. Salen del SharePoint de GROWTH MARKETING, carpeta <code>FOTOS SALAS</code>, y las prepara <code>preparar-fotos.py</code>. Son 138 archivos y 6,9 MB en <code>fotos/</code>, con el HTML sin moverse de 0,21 MB. Faltan Libertador y Polo enteras, que todavía no están en SharePoint, y nueve carpetas que están creadas pero vacías.</li>
