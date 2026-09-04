@@ -6,8 +6,8 @@ dependencias.
 
 | Variante | Archivo | Qué es |
 |---|---|---|
-| **COPILOTO** | `hit-salas-copiloto-v2.4.html` | Buscador conversacional, la landing pregunta y guía |
-| **EXPLORA** | `hit-salas-explora-v2.4.html` | Buscador clásico con filtros, ves todo y elegís |
+| **COPILOTO** | `hit-salas-copiloto-v2.5.html` | Buscador conversacional, la landing pregunta y guía |
+| **EXPLORA** | `hit-salas-explora-v2.5.html` | Buscador clásico con filtros, ves todo y elegís |
 
 Los otros archivos del repo:
 
@@ -19,7 +19,7 @@ Los otros archivos del repo:
 | `preparar-fotos.py` | Prepara las fotos del Drive y las deja en `fotos/`, 3 por sala |
 | `embeber-fotos.py` | Alternativa que mete las fotos adentro del HTML, en base64 |
 | `publicar.sh` | `git add` + `commit` + `push` en un comando |
-| `docs/conflictos.md` | Lo que no cuadra entre las planillas y el brochure, para marketing |
+| `docs/conflictos.md` | Lo que no cuadra entre las planillas y el brochure, para marketing. Al 02/09 |
 
 ## Versionado
 
@@ -50,7 +50,8 @@ para que no se pierda si alguien renombra el archivo.
 | v2.1 | Teléfono de contacto, coffee break servido en la sala, Tecno en Parque Patricios |
 | v2.2 | Textos de sede escritos por marketing, del brochure |
 | v2.3 | Reseñas reales de Google por Places API. Puntaje y total dejan de estar hardcodeados. Se sacó la barra de distribución inventada |
-| v2.4 | Nomenclatura oficial del 01/09. 48 salas: bajan las 3 de Polo excluidas, las 2 del Workcafé de CEL torre 1 y ARG-1-06; sube la cuarta Conference de CEL torre 2. La card ya no muestra un precio distinto al del checkout. Una sola escala de duración, sin la jornada de 8 h que no era tarifa. Reseñas reales desde el arranque, 1420 y 4,5, y solo se muestran las de 4 y 5 estrellas. Los 8 Place ID fijados. Las fotos pasan a archivos sueltos en `fotos/` |
+| v2.4 | Nomenclatura oficial del 01/09. 48 salas: bajan las 3 de Polo excluidas, las 2 del Workcafé de CEL torre 1 y ARG-1-06; sube la cuarta Conference de CEL torre 2. La card ya no muestra un precio distinto al del checkout. Una sola escala de duración, sin la jornada de 8 h que no era tarifa. Reseñas reales desde el arranque, 1420 y 4,5, y solo se muestran las de 4 y 5 estrellas. Los 8 Place ID fijados |
+| v2.5 | Fotos reales: 21 salas con tres cada una, las 8 fachadas de sede y la foto grande de la home, como archivos sueltos en `fotos/`. Textos de marketing en toda la landing, con disponibilidad y precio de referencia por sede. Equipamiento confirmado sala por sala y limpieza de lo que se afirmaba sin fuente. La ficha de sala pierde "Qué la diferencia" y el equipamiento pasa adentro de "Qué incluye" |
 
 ## Cargar las fotos
 
@@ -65,18 +66,24 @@ cambiar una foto es reemplazar un archivo en vez de regenerar los dos HTML.
 Sigue andando abierto con doble click, porque las rutas son relativas. La única
 condición es que la carpeta `fotos/` esté al lado del HTML.
 
-### Desde la descarga del Drive
+### Desde la descarga de SharePoint
 
-Las fotos vienen de Drive con una carpeta por sede y adentro una por sala.
+Las fotos están en **GROWTH MARKETING → 2. MATERIALES INSTITUCIONALES Y FOTOS →
+FOTOS SALAS**, con una carpeta por sede y adentro una por sala.
 
 ```
-descarga/01. Cañitas/Sala A/Cañitas_SalaA_0085.jpg
-descarga/02. Arguibel/Boardroom A/...
+descarga/Arguibel/Conference 1.A/Arguibel_1.A_0126.jpg
+descarga/Ugarte/SALA A- Piso 2/...
+descarga/Vilo/Boardroom C- Piso 5/...
 ```
+
+Los originales pesan unos 12 MB cada uno, así que no se bajan por el conector
+de SharePoint, que corta en 5 MB por archivo. Hay que sincronizar la carpeta
+con OneDrive o bajarla como ZIP y descomprimirla.
 
 ```bash
 pip3 install Pillow
-python3 preparar-fotos.py descarga/ hit-salas-copiloto-v2.4.html hit-salas-explora-v2.4.html --por-sala 3
+python3 preparar-fotos.py descarga/ hit-salas-copiloto-v2.5.html hit-salas-explora-v2.5.html --por-sala 3
 ```
 
 Elige las primeras 3 de cada sala, comprime a WebP 1200px calidad 65, las
@@ -93,8 +100,8 @@ alcanza para saber cuál es y hay que resolverlo a mano.
 ```
 ARG-PB-BR-A-1.webp   sala ARG-PB-BR-A, foto 1 (la portada)
 ARG-PB-BR-A-2.webp   sala ARG-PB-BR-A, foto 2
-sede-arguibel-1.webp foto de la sede, para el carrusel
-landing-1.webp       foto grande de la sección de valor
+sede-arguibel-1.webp fachada de la sede, para el carrusel de ubicaciones
+landing-1.webp       foto grande de la sección de valor de la home
 ```
 
 La ficha de sala se acomoda a cuántas fotos haya, de 1 a 5. Sin ninguna deja
@@ -171,13 +178,13 @@ problema de contenido duplicado entre las dos variantes.
 una versión nueva hay que tocar **esas dos líneas**, nada más:
 
 ```json
-{ "source": "/copiloto", "destination": "/hit-salas-copiloto-v2.4.html" },
-{ "source": "/explora",  "destination": "/hit-salas-explora-v2.4.html" }
+{ "source": "/copiloto", "destination": "/hit-salas-copiloto-v2.5.html" },
+{ "source": "/explora",  "destination": "/hit-salas-explora-v2.5.html" }
 ```
 
 La ventaja de dejar los archivos viejos en el repo es que las versiones
 anteriores siguen accesibles por su nombre completo, por ejemplo
-`/hit-salas-copiloto-v2.3.html`, para comparar.
+`/hit-salas-copiloto-v2.4.html`, para comparar.
 
 ## Publicar con GitHub Pages
 
@@ -197,7 +204,10 @@ reseñas importan, tiene que ser Vercel.
 |---|---|
 | Inventario, nombres, capacidad, piso | `Salas de Reunión HIT 2026` |
 | Precio por hora, sin IVA | `Current Prices Salas y Auditorios`, columna `Precios 1/08/26` |
-| Equipamiento, política de reserva, mínimos, textos de sede, azul de marca | Brochure `Salas de reunión Julio 2026` |
+| Equipamiento por sala | `HIT - Equipamiento e Incluye salas`, del 02/09 |
+| Textos de la landing y de las sedes | `Textos LANDING SALAS`, de marketing |
+| Fotos de salas | SharePoint GROWTH MARKETING, carpeta `FOTOS SALAS` |
+| Política de reserva, mínimos, textos de sede, azul de marca | Brochure `Salas de reunión Julio 2026` |
 | Direcciones y `cid` de Google | Links de Maps pasados por Mar el 24/08 |
 | Reseñas, puntaje y total por sede | Google Places API, en vivo. Los `g` y `r` de `SEDES` quedan de arranque |
 

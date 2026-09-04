@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Prepara las fotos de las salas a partir de la descarga cruda del Drive.
+Prepara las fotos de las salas a partir de la descarga cruda de SharePoint.
 
     python3 preparar-fotos.py descarga/ hit-salas-copiloto-v2.4.html hit-salas-explora-v2.4.html
 
@@ -14,15 +14,23 @@ entra donde antes entraba un data URI. Y como la ruta es relativa, sigue
 andando abierto con doble click, con la única condición de que la carpeta
 fotos/ esté al lado del HTML.
 
-Qué espera encontrar en la carpeta de entrada, que es como viene del Drive:
+Qué espera encontrar en la carpeta de entrada, que es como viene de
+«FOTOS SALAS» en el SharePoint de GROWTH MARKETING:
 
-    descarga/01. Cañitas/Sala A/Cañitas_SalaA_0085.jpg
-    descarga/02. Arguibel/Boardroom A/...
+    descarga/Arguibel/Conference 1.A/Arguibel_1.A_0126.jpg
+    descarga/Ugarte/SALA A- Piso 2/...
+    descarga/Vilo/Boardroom C- Piso 5/...
 
 La sede sale del nombre de la carpeta de primer nivel y la sala del de
 segundo. Para saber a qué código corresponde cada carpeta, lee el array SALAS
-del HTML y busca por sede más tipo más letra. Lo que no puede resolver lo
-lista al final en vez de adivinar.
+del HTML y cruza sede, piso, letra y tipo. Los nombres de carpeta traen el
+piso de tres formas distintas y las tres se entienden: «Conference 1.A»,
+«SALA A- Piso 2» y «Boardroom A PB».
+
+Lo que no puede resolver lo lista al final en vez de adivinar. Es a propósito:
+en SharePoint hay carpetas de salas que se dieron de baja, como el WorkCafé
+del piso 3 de CEL, y mapearlas por parecido les pondría esas fotos a una sala
+que sigue publicada.
 
 Opciones:
     --por-sala 3      cuántas fotos por sala (default 3)
@@ -86,27 +94,60 @@ def leer_salas(html):
     return out
 
 
-def resolver(sede, carpeta_sala, salas):
-    """'Sala A' en canitas -> el cod de la sala que le corresponde."""
-    n = norm(carpeta_sala)
-    letra = None
-    m = re.search(r"\b([A-Z])\b\s*$", n) or re.search(r"\b(VIP)\b", n)
+def piso_de(n):
+    """Saca el piso del nombre de carpeta. Devuelve 'P1', 'PB' o None.
+
+    Los nombres vienen de tres formas distintas segun quien armo la carpeta:
+      'Conference 1.A'        el piso va antes del punto
+      'SALA A- Piso 2'        escrito con todas las letras
+      'Boardroom A PB'        planta baja
+    """
+    if re.search(r"\bPB\b", n):
+        return "PB"
+    m = re.search(r"PISO\s*(\d+)", n) or re.search(r"\b(\d+)\s*\.", n)
+    return "P" + m.group(1) if m else None
+
+
+def letra_de(n):
+    """La letra que identifica la sala. 'Conference 1.A' -> 'A'."""
+    if re.search(r"\bVIP\b", n):
+        return "VIP"
+    # Primero la que va pegada al numero de piso, 'Conference 1.A' -> A
+    m = re.search(r"\d\s*\.\s*([A-Z])\b", n)
     if m:
-        letra = m.group(1)
+        return m.group(1)
+    # Si no, la letra suelta, 'SALA A- Piso 2' -> A
+    m = re.search(r"\b(?:SALA|ROOM|BOARDROOM|CONFERENCE|CONF|WORKSHOP)\s+([A-Z])\b", n)
+    if m:
+        return m.group(1)
+    m = re.search(r"\b([A-Z])\b(?!.*\b[A-Z]\b)", n)
+    return m.group(1) if m else None
+
+
+def resolver(sede, carpeta_sala, salas):
+    """'Conference 1.A' en arguibel -> ARG-P1-CF-A."""
+    n = norm(carpeta_sala)
+    letra, piso = letra_de(n), piso_de(n)
     tipo = None
     for k in sorted(TIPOS, key=len, reverse=True):
         if k in n:
             tipo = TIPOS[k]
             break
     cands = [s for s in salas if s["sede"] == sede]
-    if tipo:
-        exactas = [s for s in cands if s["cod"].split("-")[2] == tipo]
-        # Una sede puede tener el mismo tipo en varios pisos. Si la carpeta no
-        # dice el piso no hay forma de saber cuál, y adivinar sería peor.
-        if exactas:
-            cands = exactas
+    if piso:
+        # El piso es lo que mas discrimina: Arguibel tiene Conference A en el 1,
+        # el 2 y el 3, y sin el piso las tres carpetas caen en la misma sala.
+        # Sin "or cands" a proposito: si la carpeta dice un piso donde la sede no
+        # tiene ninguna sala, es una sala que no esta en la landing, no una de
+        # otro piso. Las del WorkCafe de CEL, piso 3, son bajas del 01/09 y con
+        # el fallback terminaban pisando las fotos de la Conference B del piso 2.
+        cands = [s for s in cands if s["cod"].split("-")[1] == piso]
+        if not cands:
+            return None
     if letra:
         cands = [s for s in cands if s["cod"].split("-")[-1] == letra] or cands
+    if tipo and len(cands) > 1:
+        cands = [s for s in cands if s["cod"].split("-")[2] == tipo] or cands
     return cands[0]["cod"] if len(cands) == 1 else None
 
 
@@ -118,6 +159,8 @@ def main():
     ap.add_argument("--ancho", type=int, default=1200)
     ap.add_argument("--calidad", type=int, default=65)
     ap.add_argument("--salida", default="fotos")
+    ap.add_argument("--landing", default="CEL2-P2-BR-A",
+                    help="código de la sala cuya primera foto va en la sección de valor de la home")
     a = ap.parse_args()
 
     if not os.path.isdir(a.descarga):
@@ -127,9 +170,38 @@ def main():
     os.makedirs(a.salida, exist_ok=True)
 
     fotos, sin_resolver, total_kb = {}, [], 0
+
+    # Las fachadas viven sueltas en una carpeta aparte y son las del carrusel de
+    # ubicaciones. Van con la clave "sede:<id>", que es la que espera el HTML.
+    for cand in ("Fotos Sitios", "Fotos Sedes", "Sedes"):
+        p_sitios = os.path.join(a.descarga, cand)
+        if not os.path.isdir(p_sitios):
+            continue
+        for f in sorted(os.listdir(p_sitios)):
+            if os.path.splitext(f)[1].lower() not in EXT:
+                continue
+            sede = sede_de(os.path.splitext(f)[0])
+            if not sede:
+                sin_resolver.append((cand, f, "no reconozco de qué sede es la fachada"))
+                continue
+            clave = "sede:" + sede
+            if clave in fotos:
+                continue
+            im = Image.open(os.path.join(p_sitios, f)).convert("RGB")
+            if im.width > a.ancho:
+                im = im.resize((a.ancho, round(im.height * a.ancho / im.width)), Image.LANCZOS)
+            dest = os.path.join(a.salida, f"sede-{sede}-1.webp")
+            im.save(dest, format="WEBP", quality=a.calidad, method=6)
+            total_kb += os.path.getsize(dest) / 1024
+            fotos[clave] = [f"{a.salida}/sede-{sede}-1.webp"]
+            print(f"  {cand:16} {f[:28]:28} -> {clave}")
+        break
+
     for sede_dir in sorted(os.listdir(a.descarga)):
         p_sede = os.path.join(a.descarga, sede_dir)
         if not os.path.isdir(p_sede):
+            continue
+        if sede_dir in ("Fotos Sitios", "Fotos Sedes", "Sedes", "Logos"):
             continue
         sede = sede_de(sede_dir)
         if not sede:
@@ -162,6 +234,16 @@ def main():
 
     if not fotos:
         sys.exit("\nNo pude resolver ninguna sala. Revisá los nombres de las carpetas.")
+
+    # La foto grande de la seccion "Tu experiencia en HIT". No hay un archivo
+    # propio para eso en SharePoint, asi que se reusa la portada de una sala.
+    # Se elige con --landing; por defecto el Boardroom de CEL, que es la mas
+    # amplia y la unica con la pantalla encendida.
+    if a.landing in fotos:
+        fotos["landing:1"] = [fotos[a.landing][0]]
+        print(f"\n  seccion de valor de la home  -> portada de {a.landing}")
+    else:
+        print(f"\n  ojo: {a.landing} no tiene fotos, la seccion de valor queda sin imagen")
 
     print(f"\n{len(fotos)} salas con foto, {sum(len(v) for v in fotos.values())} archivos, "
           f"{total_kb/1024:.1f} MB en {a.salida}/")
