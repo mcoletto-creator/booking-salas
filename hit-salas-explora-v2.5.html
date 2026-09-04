@@ -69,12 +69,35 @@
   .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:26px}
   .more{font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap}
   .lead{font-size:14px;color:var(--g1);max-width:560px;margin-top:8px}
-  .hero{text-align:center;min-height:calc(100vh - var(--nav-h));
-    display:flex;flex-direction:column;justify-content:center;padding:40px 0 60px}
-  h1{font-size:clamp(36px,5.8vw,66px);line-height:1.04;letter-spacing:-.035em;font-weight:700}
-  h1 .off{color:var(--g2);display:block}
-  .sub{font-size:clamp(14px,1.5vw,17px);color:var(--g1);margin:20px auto 34px;max-width:560px}
-  .sub b{color:var(--ink);font-weight:600}
+  /* El hero va sobre una foto. El texto pasa a blanco y hay un degradado
+     encima de la imagen: sin el, el titulo cae sobre el ventanal y no se lee.
+     La foto la pinta pintarFotosEstaticas con la clave "hero:1", asi que si
+     no esta cargada el hero queda sobre el gris oscuro de fondo y se sigue
+     leyendo igual. */
+  /* Tope de 760px: a 100vh puros, en un monitor alto quedaba un tercio de foto
+     vacia abajo del buscador. El encuadre va en 38% para mostrar el ventanal
+     y no el piso. */
+  .hero{text-align:center;position:relative;isolation:isolate;
+    min-height:min(calc(100vh - var(--nav-h)),760px);
+    display:flex;flex-direction:column;justify-content:center;padding:58px 26px 62px;
+    border-radius:22px;overflow:hidden;background:#20262C center 38%/cover no-repeat}
+  /* El degradado es mas fuerte en el medio de lo que pediria la foto sola: ahi
+     cae la linea del precio, en 14px, justo sobre el ventanal. */
+  .hero::after{content:"";position:absolute;inset:0;z-index:-1;
+    background:linear-gradient(180deg,rgba(10,13,16,.62),rgba(10,13,16,.54) 45%,rgba(10,13,16,.76))}
+  h1{font-size:clamp(36px,5.8vw,66px);line-height:1.04;letter-spacing:-.035em;font-weight:700;color:#fff}
+  h1 .off{color:rgba(255,255,255,.66);display:block}
+  .sub{font-size:clamp(14px,1.5vw,17px);color:rgba(255,255,255,.88);margin:20px auto 34px;max-width:560px}
+  .sub b{color:#fff;font-weight:600}
+  .hero .sub-dato{color:rgba(255,255,255,.78)}
+  .hero .chips-l{color:rgba(255,255,255,.66)}
+  .hero .chip{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff;
+    backdrop-filter:blur(6px)}
+  .hero .chip:hover{background:#fff;border-color:#fff;color:var(--ink)}
+  /* Full bleed en mobile. El margen negativo tiene que ser exactamente el
+     padding lateral del .wrap, que ahi es 16px: con -18px el hero sobresalia
+     2px y aparecia scroll horizontal en toda la pagina. */
+  @media(max-width:560px){.hero{border-radius:0;margin-inline:-16px;padding:44px 18px 34px}}
   .hero-in{max-width:880px;margin:0 auto;width:100%}
   .below{padding:0 0 70px;text-align:center}
   @media(max-width:900px){.hero{min-height:0;padding:56px 0 40px}}
@@ -105,6 +128,7 @@
   .chip{font:inherit;font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid var(--line);
     background:#fff;padding:7px 15px;border-radius:40px;color:var(--ink)}
   .chip:hover{border-color:var(--acc);color:var(--acc)}
+  .chip:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
   /* buscador fijo: aparece recién cuando el hero se va de la pantalla, para no
      duplicar el buscador grande mientras está a la vista */
@@ -1160,9 +1184,10 @@
       <li><b>Migueletes, Pampa y Maipú no tienen salas de reunión.</b> Están cargadas en <code>SEDES</code> con su dirección y su cid, marcadas con <code>salas:false</code>, y quedan afuera del buscador, del carrusel, de los conteos y de las reseñas. Cuando tengan inventario, se les saca esa marca. Todo el flujo usa <code>SEDESOK</code>, que es la lista filtrada.</li>
       <li><b>El equipamiento sale del brochure "Salas de reunión Julio 2026"</b>, que lo muestra sala por sala con iconos. Antes se parseaba de las descripciones y quedaban 29 salas sin dato; ahora quedan cero. Wifi, TV con HDMI y té y café los tienen las 48, así que salieron del filtro y pasaron a "Qué incluye": un filtro que no descarta nada no es un filtro.</li>
       <li><b>La política de cancelación estaba inventada y era más generosa que la real.</b> Decía "gratis hasta 24 h antes y te devolvemos el total". La de verdad, del brochure: se abona el 100% al reservar, con más de 72 h queda a favor por dos meses, con menos de 72 h no hay reintegro. Corregida en los seis lugares donde aparecía.</li>
+      <li><b>El hero tiene foto.</b> Va de fondo el Boardroom A de Vilo, con un degradado encima para que el título y la línea del precio se lean sobre el ventanal. El texto pasó a blanco y los chips a vidrio esmerilado. Se elige con <code>--hero</code>. Si la foto no está cargada, el hero queda sobre un gris oscuro y se lee igual.</li>
       <li><b>Las fotos de la sala pasan solas, sin pop-up.</b> Antes era una grilla que había que clickear para abrir un modal, y el modal tapaba el precio y el botón de reservar justo cuando la persona estaba decidiendo. Ahora es un slideshow adentro de la ficha: avanza solo cada 5 segundos, se frena al pasar el mouse o al tocar cualquier control, y tiene flechas y puntos para moverse. El alto es fijo, 300 px en desktop y 210 en mobile, así la reserva no se va de pantalla. Las salas sin fotos muestran un solo recuadro que dice "Foto pendiente" en vez de cinco huecos grises.</li>
       <li><b>La home ya no tiene ningún hueco de foto.</b> Las ocho sedes tienen su fachada en el carrusel de ubicaciones y la sección "Tu experiencia en HIT" tiene la suya. Las fachadas salen de la carpeta <code>Fotos Sitios</code> del SharePoint. Para la foto grande no hay un archivo propio, así que se reusa la portada de una sala, elegible con <code>--landing</code>; por defecto el Boardroom de CEL, que es la más amplia y la única con la pantalla encendida.</li>
-      <li><b>Entraron las fotos reales.</b> 23 de las 48 salas ya tienen entre tres y cinco fotos, 4,7 en promedio, y las ocho sedes tienen su fachada en el carrusel de ubicaciones. Salen del SharePoint de GROWTH MARKETING, carpeta <code>FOTOS SALAS</code>, y las prepara <code>preparar-fotos.py</code>. Son 115 archivos y 6,2 MB en <code>fotos/</code>, con el HTML sin moverse de 0,21 MB. Faltan Libertador y Polo enteras, que todavía no están en SharePoint, y nueve carpetas que están creadas pero vacías.</li>
+      <li><b>Entraron las fotos reales.</b> 28 de las 48 salas ya tienen entre tres y cinco fotos, 4,6 en promedio, y las ocho sedes tienen su fachada en el carrusel de ubicaciones. Salen del SharePoint de GROWTH MARKETING, carpeta <code>FOTOS SALAS</code>, y las prepara <code>preparar-fotos.py</code>. Son 138 archivos y 6,9 MB en <code>fotos/</code>, con el HTML sin moverse de 0,21 MB. Faltan Libertador y Polo enteras, que todavía no están en SharePoint, y nueve carpetas que están creadas pero vacías.</li>
       <li><b>La ficha de sala tiene un bloque menos.</b> Se sacó "Qué la diferencia" y el equipamiento propio de cada sala pasó adentro de "Qué incluye", junto con lo que trae toda sala de la red. Antes eran dos listas separadas que el usuario tenía que leer juntas para saber con qué se iba a encontrar. Ahora se lee una sola: Wifi, TV con HDMI y té y café siempre, y abajo la pizarra y el teléfono IP de esa sala, con cruz gris cuando no los tiene. El Boardroom B de Polo, que es un living, muestra las dos cruces. El texto de <code>dif</code> sigue en la card del listado.</li>
       <li><b>Los textos son los de marketing</b>, del documento «Textos LANDING SALAS». Cambió el título del hero, la bajada, el CTA, los rótulos del buscador, el módulo de disponibilidad, el de reseñas, los tres beneficios de «Tu experiencia en HIT», el bloque de add-ons con su disclaimer y las descripciones de seis sedes. Arguibel y CEL ya tenían la versión final.</li>
       <li><b>La ficha de sede ahora dice disponibilidad y precio de referencia</b>, como pedía el documento. Los dos salen calculados de las salas cargadas y no escritos a mano: el documento traía CEL como «5 y 12 personas» cuando el Boardroom es de 14, y un número a mano se desactualiza sin que nadie lo note. Los ocho precios de referencia del documento sí coinciden uno por uno con la lista de agosto.</li>
@@ -1771,9 +1796,15 @@ const FOTOS={
   "UGA-P2-BR-D":["fotos/UGA-P2-BR-D-1.webp","fotos/UGA-P2-BR-D-2.webp","fotos/UGA-P2-BR-D-3.webp","fotos/UGA-P2-BR-D-4.webp"],
   "UGA-P2-CF-A":["fotos/UGA-P2-CF-A-1.webp","fotos/UGA-P2-CF-A-2.webp","fotos/UGA-P2-CF-A-3.webp","fotos/UGA-P2-CF-A-4.webp","fotos/UGA-P2-CF-A-5.webp"],
   "UGA-P2-CF-C":["fotos/UGA-P2-CF-C-1.webp","fotos/UGA-P2-CF-C-2.webp","fotos/UGA-P2-CF-C-3.webp","fotos/UGA-P2-CF-C-4.webp"],
+  "VIL-P3-R-A":["fotos/VIL-P3-R-A-1.webp","fotos/VIL-P3-R-A-2.webp","fotos/VIL-P3-R-A-3.webp","fotos/VIL-P3-R-A-4.webp","fotos/VIL-P3-R-A-5.webp"],
+  "VIL-P4-R-A":["fotos/VIL-P4-R-A-1.webp","fotos/VIL-P4-R-A-2.webp","fotos/VIL-P4-R-A-3.webp","fotos/VIL-P4-R-A-4.webp","fotos/VIL-P4-R-A-5.webp"],
+  "VIL-P4-R-B":["fotos/VIL-P4-R-B-1.webp","fotos/VIL-P4-R-B-2.webp","fotos/VIL-P4-R-B-3.webp","fotos/VIL-P4-R-B-4.webp"],
+  "VIL-P4-R-C":["fotos/VIL-P4-R-C-1.webp","fotos/VIL-P4-R-C-2.webp","fotos/VIL-P4-R-C-3.webp","fotos/VIL-P4-R-C-4.webp","fotos/VIL-P4-R-C-5.webp"],
+  "VIL-P4-R-D":["fotos/VIL-P4-R-D-1.webp","fotos/VIL-P4-R-D-2.webp","fotos/VIL-P4-R-D-3.webp","fotos/VIL-P4-R-D-4.webp","fotos/VIL-P4-R-D-5.webp"],
   "VIL-P5-BR-A":["fotos/VIL-P5-BR-A-1.webp","fotos/VIL-P5-BR-A-2.webp","fotos/VIL-P5-BR-A-3.webp","fotos/VIL-P5-BR-A-4.webp","fotos/VIL-P5-BR-A-5.webp"],
   "VIL-P5-BR-B":["fotos/VIL-P5-BR-B-1.webp","fotos/VIL-P5-BR-B-2.webp","fotos/VIL-P5-BR-B-3.webp","fotos/VIL-P5-BR-B-4.webp","fotos/VIL-P5-BR-B-5.webp"],
   "VIL-P5-BR-C":["fotos/VIL-P5-BR-C-1.webp","fotos/VIL-P5-BR-C-2.webp","fotos/VIL-P5-BR-C-3.webp","fotos/VIL-P5-BR-C-4.webp","fotos/VIL-P5-BR-C-5.webp"],
+  "hero:1":["fotos/VIL-P5-BR-A-1.webp"],
   "landing:1":["fotos/CEL2-P2-BR-A-1.webp"],
   "sede:arguibel":["fotos/sede-arguibel-1.webp"],
   "sede:canitas":["fotos/sede-canitas-1.webp"],
@@ -1842,6 +1873,11 @@ function pintarFotosEstaticas(){
   pintarNumeros();
   const el=document.querySelector(".valueprop .ph");
   if(el){ const st=phStyle("landing:1"); if(st) el.setAttribute("style",st); }
+  /* La foto del hero. Va como background del propio .hero, no como <img>, para
+     que el degradado de arriba la cubra entera sin importar cuanto crezca el
+     texto. Si la clave no existe queda el color de fondo del CSS. */
+  const hero=document.querySelector(".hero"), hf=fotos("hero:1")[0];
+  if(hero&&hf) hero.style.backgroundImage=`url('${hf}')`;
 }
 if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",pintarFotosEstaticas);
 else pintarFotosEstaticas();

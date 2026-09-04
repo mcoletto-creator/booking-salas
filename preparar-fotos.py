@@ -173,6 +173,8 @@ def main():
     ap.add_argument("--salida", default="fotos")
     ap.add_argument("--landing", default="CEL2-P2-BR-A",
                     help="código de la sala cuya primera foto va en la sección de valor de la home")
+    ap.add_argument("--hero", default="VIL-P5-BR-A",
+                    help="código de la sala cuya primera foto va de fondo del hero")
     a = ap.parse_args()
 
     if not os.path.isdir(a.descarga):
@@ -251,11 +253,13 @@ def main():
     # propio para eso en SharePoint, asi que se reusa la portada de una sala.
     # Se elige con --landing; por defecto el Boardroom de CEL, que es la mas
     # amplia y la unica con la pantalla encendida.
-    if a.landing in fotos:
-        fotos["landing:1"] = [fotos[a.landing][0]]
-        print(f"\n  seccion de valor de la home  -> portada de {a.landing}")
-    else:
-        print(f"\n  ojo: {a.landing} no tiene fotos, la seccion de valor queda sin imagen")
+    for clave, cod, donde in (("landing:1", a.landing, "seccion de valor de la home"),
+                              ("hero:1", a.hero, "fondo del hero")):
+        if cod in fotos:
+            fotos[clave] = [fotos[cod][0]]
+            print(f"  {donde:28} -> portada de {cod}")
+        else:
+            print(f"  ojo: {cod} no tiene fotos, {donde} queda sin imagen")
 
     print(f"\n{len(fotos)} salas con foto, {sum(len(v) for v in fotos.values())} archivos, "
           f"{total_kb/1024:.1f} MB en {a.salida}/")
